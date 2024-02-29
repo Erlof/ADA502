@@ -9,6 +9,8 @@ from frcm.datamodel.model import Location
 if __name__ == "__main__":
 
 
+
+#Test om endring kommer med
     met_extractor = METExtractor()
 
     # TODO: maybe embed extractor into client
