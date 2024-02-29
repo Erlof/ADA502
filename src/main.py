@@ -8,10 +8,13 @@ from frcm.datamodel.model import Location
 # sample code illustrating how to use the Fire Risk Computation API (FRCAPI)
 if __name__ == "__main__":
 
-
-
-#Test om endring kommer med
     met_extractor = METExtractor()
+
+
+
+
+
+
 
     # TODO: maybe embed extractor into client
     met_client = METClient(extractor=met_extractor)
