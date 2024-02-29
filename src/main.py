@@ -1,4 +1,4 @@
-import datetime
+import datetime 
 
 from frcm.frcapi import FireRiskAPI
 from frcm.weatherdata.client_met import METClient
@@ -7,6 +7,7 @@ from frcm.datamodel.model import Location
 
 # sample code illustrating how to use the Fire Risk Computation API (FRCAPI)
 if __name__ == "__main__":
+
 
     met_extractor = METExtractor()
 
