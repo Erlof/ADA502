@@ -21,8 +21,8 @@ if __name__ == "__main__":
 
     frc = FireRiskAPI(client=met_client)
 
-    location = Location(latitude=60.383, longitude=5.3327)  # Bergen
-    # location = Location(latitude=59.4225, longitude=5.2480)  # Haugesund
+    # location = Location(latitude=60.383, longitude=5.3327)  # Bergen
+    location = Location(latitude=59.4225, longitude=5.2480)  # Haugesund
 
     # Fails
     # location = Location(latitude=62.5780, longitude=11.3919)  # Røros

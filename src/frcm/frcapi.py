@@ -24,11 +24,11 @@ class FireRiskAPI:
 
         observations = self.client.fetch_observations(location, start=start_time, end=time_now)
 
-        print(observations)
+        # print(observations)
 
         forecast = self.client.fetch_forecast(location)
 
-        print(forecast)
+        # print(forecast)
 
         wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
 
