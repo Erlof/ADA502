@@ -32,7 +32,7 @@ class FireRiskAPI:
 
         wd = WeatherData(created=time_now, observations=observations, forecast=forecast)
 
-        print(wd.to_json())
+        # print(wd.to_json())
 
         prediction = self.compute(wd)
 

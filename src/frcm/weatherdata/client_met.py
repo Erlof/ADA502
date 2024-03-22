@@ -122,7 +122,7 @@ class METClient(WeatherDataClient):
 
         station_id = self.get_nearest_station_id(location)
 
-#        print(station_id)
+        print(station_id)
 
         response = self.fetch_observations_raw(station_id, start, end)
 

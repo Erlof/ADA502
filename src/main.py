@@ -10,12 +10,6 @@ if __name__ == "__main__":
 
     met_extractor = METExtractor()
 
-
-
-
-
-
-
     # TODO: maybe embed extractor into client
     met_client = METClient(extractor=met_extractor)
 
@@ -30,8 +24,16 @@ if __name__ == "__main__":
 
     # how far into the past to fetch observations
 
-    obs_delta = datetime.timedelta(days=2)
+    obs_delta = datetime.timedelta(days=1)
 
     predictions = frc.compute_now(location, obs_delta)
 
     print(predictions)
+
+    with open("position.txt", "w") as fil:
+        for lines in predictions.firerisks:
+            tall = str(lines.ttf)
+            # print(tall)
+            fil.write(tall+'\n')
+    print(fil.closed)
+
