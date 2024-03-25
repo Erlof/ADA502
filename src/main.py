@@ -1,9 +1,12 @@
 import datetime 
+from fastapi import FastAPI
+import uvicorn
 
 from frcm.frcapi import FireRiskAPI
 from frcm.weatherdata.client_met import METClient
 from frcm.weatherdata.extractor_met import METExtractor
 from frcm.datamodel.model import Location
+from api.uploads_data import api_fast
 
 # sample code illustrating how to use the Fire Risk Computation API (FRCAPI)
 if __name__ == "__main__":
@@ -30,10 +33,15 @@ if __name__ == "__main__":
 
     print(predictions)
 
-    with open("position.txt", "w") as fil:
-        for lines in predictions.firerisks:
-            tall = str(lines.ttf)
-            # print(tall)
-            fil.write(tall+'\n')
-    print(fil.closed)
+
+    firerisks = api_fast.get_fire_risk(predictions)
+    api_fast.make_file(firerisks)
+
+    app = FastAPI()
+
+    @app.get("/")
+    def root():
+        return {"message": firerisks}
+    
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
