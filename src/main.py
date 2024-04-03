@@ -39,6 +39,8 @@ if __name__ == "__main__":
 
     app = FastAPI()
 
+
+    # Funker ikke fra api_fast.uploads_data
     @app.get("/")
     def root():
         return {"message": firerisks}
