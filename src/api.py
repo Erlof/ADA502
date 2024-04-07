@@ -15,6 +15,10 @@ async def write_position(latitude: float, longitude: float):
         # Printing latitude and longitude
         print(f"Received latitude: {latitude}, longitude: {longitude}")
 
+        # Print both latitude and longitude in PyCharm
+        print("Received latitude:", latitude)
+        print("Received longitude:", longitude)
+
         with open("position.txt", "w") as f:
             f.write(f"Latitude: {latitude}, Longitude: {longitude}")
         return {"message": "Position has been written to position.txt"}
