@@ -9,7 +9,7 @@ class FireRiskAPI:
 
     def __init__(self, client: WeatherDataClient):
         self.client = client
-        self.timedelta_ok = datetime.timedelta(days=1) # TODO: when during a day is observations updated? (12:00 and 06:00)
+        self.timedelta_ok = datetime.timedelta(days=2) # TODO: when during a day is observations updated? (12:00 and 06:00)
         # TODO (NOTE): Short term forecast updates every 3rd hour with long term forecast every 12th hour at 12:00 and 06:00
         self.interpolate_distance = 720
 

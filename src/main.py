@@ -7,6 +7,10 @@ from frcm.weatherdata.client_met import METClient
 from frcm.weatherdata.extractor_met import METExtractor
 from frcm.datamodel.model import Location
 from api.uploads_data import api_fast
+from api.uploads_data import get_fire_risk
+from database.test_mongodb import mongo_connect
+from database.test_mongodb import convert_time
+from test_ting import time_format_now
 
 # sample code illustrating how to use the Fire Risk Computation API (FRCAPI)
 if __name__ == "__main__":
@@ -25,22 +29,58 @@ if __name__ == "__main__":
     # location = Location(latitude=62.5780, longitude=11.3919)  # Røros
     # location = Location(latitude=69.6492, longitude=18.9553)  # Tromsø
 
-    # how far into the past to fetch observations
+    loc_value = location.latitude, location.longitude
+    loc_str = str(loc_value)
 
-    obs_delta = datetime.timedelta(days=1)
+    connect = mongo_connect()
 
-    predictions = frc.compute_now(location, obs_delta)
+    query = time_format_now()
+    
+    print('test')
+    print(query)
 
-    print(predictions)
+    results = connect.get_data(loc_str, query)
+    #print(results.pretty())
+    
+
+    if results == None:
 
 
-    firerisks = api_fast.get_fire_risk(predictions)
-    api_fast.make_file(firerisks)
+        # how far into the past to fetch observations
+
+        obs_delta = datetime.timedelta(days=1)
+
+        predictions = frc.compute_now(location, obs_delta)
+        
+
+        # print(predictions)
+
+        firerisks = get_fire_risk(predictions)
+        #print(firerisks)
+        # api_fast.make_file(firerisks)
+        
+        pred_formatted = convert_time(firerisks, loc_str)
+
+        # print(pred_formatted)
+
+        connect.upload(data = pred_formatted)
+        
+        results = connect.get_data(loc_str, query = query)
+        for doc in results:
+            print(doc)
+
+    else:
+        for doc in results:
+            print(doc)
+
+
+
+    connect.disconnect()
+
 
     app = FastAPI()
 
-
-    # Funker ikke fra api_fast.uploads_data
+    # Funker ikke fra api.da
     @app.get("/")
     def root():
         return {"message": firerisks}
