@@ -22,8 +22,8 @@ if __name__ == "__main__":
 
     frc = FireRiskAPI(client=met_client)
 
-    # location = Location(latitude=60.383, longitude=5.3327)  # Bergen
-    location = Location(latitude=59.4225, longitude=5.2480)  # Haugesund
+    location = Location(latitude=60.383, longitude=5.3327)  # Bergen
+    # location = Location(latitude=59.4225, longitude=5.2480)  # Haugesund
 
     # Fails
     # location = Location(latitude=62.5780, longitude=11.3919)  # Røros
@@ -39,11 +39,12 @@ if __name__ == "__main__":
     print('test')
     print(query)
 
-    results = connect.get_data(loc_str, query)
-    #print(results.pretty())
+    results = connect.chech_for_data(query)
+    for doc in results:
+            print(doc, 'Test')
     
 
-    if results == None:
+    if len(list(results)) == 0:
 
 
         # how far into the past to fetch observations
@@ -63,9 +64,9 @@ if __name__ == "__main__":
 
         # print(pred_formatted)
 
-        connect.upload(data = pred_formatted)
+        connect.update(loc = loc_str, data = pred_formatted)
         
-        results = connect.get_data(loc_str, query = query)
+        results = connect.chech_for_data(query = query)
         for doc in results:
             print(doc)
 

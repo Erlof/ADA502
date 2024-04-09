@@ -2,6 +2,7 @@ import pymongo
 import datetime
 import logging
 import json
+from test_ting import time_format_now
 # from database.conver_json import conver_to_json
 
 
@@ -27,7 +28,7 @@ def convert_time(wd_data, loc):
     #wd_json_data = json.dumps(wd_data, indent=4, sort_keys=True, default=str)
 
         
-    wd_data_loc = {loc: wd_data}
+    wd_data_loc = {'loc' : loc} |  {'data': wd_data}
     
     return wd_data_loc
 
@@ -52,20 +53,24 @@ class mongo_connect:
         
         self.collection.insert_one(data)
 
-    def chech_for_data(self, loc, data):
-        pathen = str(loc)+'.'+str(data)
+
+    def update(self, loc, data):
+
+        self.collection.update_one(
+            {'loc' : loc},
+            {'$set' : {'data' : data}}
+        )
+
+
+
+    def chech_for_data(self, data):
+        pathen = str(data)
         print(pathen)
         results = self.collection.find(
-            { pathen : {"$exists":True} }
             )
+        print(results, 'fant data')
         return results
-
-
-    def get_data(self,loc,  query):
-        # Example: Query documents
-        results = self.chech_for_data(loc, query)
-
-        return results
+    
 
     def disconnect(self):
         self.client.close()
@@ -74,10 +79,20 @@ class mongo_connect:
 
 
 if __name__ == "__main__":
-    data = {"name": "Pizza Palace", "cuisine": "Italian"}
-    query = {"cuisine": "Italian"}
-    
+
+    loc_value = 60.383, 5.3327
+    loc_str = str(loc_value)
+
     connect = mongo_connect()
-    connect.upload(data = data)
-    connect.get_data(query = query)
-    connect.disconnect()
+
+    query = time_format_now()
+
+    print('test')
+    print(query)
+
+    results = connect.chech_for_data(query)
+    print(len(list(results)))
+
+    for doc in list(results):
+        print('Test')
+
