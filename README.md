@@ -1,113 +1,68 @@
-# DYNAMIC Fire risk indicator implementation
+# Dynamisk Indikator for Brannfare
 
-This repository contains the implementation of the dynamic fire risk indicator described in the submitted paper:
+# Introduksjon
+Dette prosjektet utnytter værprognoser og ob servasjonsdata for å beregne brannfare gjennom en tidsparameter kalt tid-til-full-overtenning (ttf) for trehus. Systemet analyserer innsendt geografisk posisjon og returnerer et gjennomsnitt av brannrisikoen i det angitte området.
 
-R.D: Strand and L.M. Kristensen. *An implementation, evaluation and validation of a dynamic fire and conflagration risk indicator for wooden homes*. Submitted for review.
+# Arv og Utvikling
+Repositoriet bygger på fundamentet av et foregående prosjekt og har blitt forbedret for å omfatte flere avanserte funksjoner. Prosjektet er utviklet av Erlend Lofthus og Tor Gunnar Hagen.
 
-which uses forecast and weather data observation for computing fire risk indication in the form of time-to-flash-over (ttf) for wooden houses. 
+# Opprinnelig Prosjekt
+Opprinnelige Utviklere: R.D. Strand og L.M. Kristensen
+Tittel: Implementasjon, evaluering og validering av en dynamisk indikator for brann- og storbrannfare i trehus
+Status: Under vurdering for publisering
+Kilde: GitHub Repository
 
-# Installation
+# Nye Funksjoner
+En nytt API er implementert, som tillater brukere å angi geografiske koordinater (lengde- og breddegrad) gjennom følgende endepunkt: http://localhost:8000/compute-fire-risk?latitude=59.9139&longitude=10.7522. Systemet beregner og returnerer deretter et gjennomsnitt av brannrisikoen for det spesifikke området.
 
-The project is based on using the [Poetry package manager](https://python-poetry.org/).
-
-Start by installing Poetry for your platform using the [installation instructions](https://python-poetry.org/docs/#installation)
-
-Create a new virtual Python environment for the project and activate the virtual environment.
-
-To install the required Python packages use:
+# Installasjon og Oppsett
+Avhengigheter
+Prosjektet bruker Poetry som pakkebehandler. Start installasjonen av Poetry ved å følge installasjonsinstruksjonene for Poetry. Opprett og aktiver et virtuelt miljø for å isolere avhengighetene:
 
 ```
 poetry install
 ```
-# Overview
 
-The implementation is organised into the following main folders:
+# Prosjektstruktur
+Viktige Kataloger
+- `datamodel` - Definerer datastrukturene for vær- og brannfaredatamodeller.
+- `weatherdata` Inneholder API-klienter og grensesnitt for å hente data fra eksterne værtjenester.
+- `fireriskmodel` Implementerer den underliggende modellen for beregning av brannrisiko.
+Hoved-APIet for dette systemet er implementert i filen `frcapi.py`
 
-- `datamodel` - contains an implementation of the data model used for weather data and fire risk indications
-- `weatherdata`  contains an client implementations and interfaces for fetching weather data from cloud services.
-- `fireriskmodel` contains an implementation of the underlying fire risk model
+# Integrerte Værdatakilder
+Implementasjonen er designet for å være uavhengig av enhver spesifikk skybasert værdatatjeneste.
 
-The main API for the implementation is in the file `frcapi.py`
+Dette biblioteket inneholder en implementasjon som bruker værdatatjenester levert av Meteorologisk institutt (MET).
 
-# Weather Data Sources
+Spesielt viser filene `src/frcm/weatherdata/client_met` and `src/frcm/weatherdata/extractor_met.py` hvordan man implementerer klienter og ekstraktorer ved å bruke:
 
-The implementation has been designed to be independent of any particular cloud-based weather data service. 
+MET Frost API for observasjoner av værdata: https://frost.met.no/index.html
+MET Forecasting API for værdata-prognoser: https://api.met.no/weatherapi/locationforecast/2.0/documentation
 
-This library contains an implementation that use the weather data services provided by the Norwegian Meteorological Institute (MET)
-
-Specifically, the files `src/frcm/weatherdata/client_met` and `src/frcm/weatherdata/extractor_met.py` shows how to implement client and extractors using
-
-- MET Frost API for weather data observations: https://frost.met.no/index.html
-- MET Forecasting API for weather data forecasts: https://api.met.no/weatherapi/locationforecast/2.0/documentation 
-
-To use these pre-implemented clients a file name `.env` must be put into the `src/frcm/weatherdata` folder having the following content:
+For å bruke disse forhåndsimplementerte klientene må en fil med navn `.env` plasseres i mappen `src/frcm/weatherdata` som inneholder følgende innhold:
 
 ```
 MET_CLIENT_ID = '<INSERT CLIENT ID HERE>'
 MET_CLIENT_SECRET = '<INSERT CLIENT SECRET HERE>'
 ```
+Legitimasjon for å bruke MET API-ene kan oppnås via: https://frost.met.no/auth/requestCredentials.html
 
-Credentials for using the MET APIs can be obtained via: https://frost.met.no/auth/requestCredentials.html
-
-Please make sure that you conform to the terms of service which includes restrictions on the number of API calls.
+Vennligst sørg for at du overholder vilkårene for bruk, som inkluderer begrensninger på antall API-kall.
 
 # Testing
-
-The folder `tests` contains a number of unit tests that can be used to test the implementation. 
-
-To execute the tests enter the `tests` folder and execute
+For å sikre funksjonaliteten til implementasjonen, utfør enhetstestene i katalogen tests med følgende kommando:
 
 ```
 pytest
 ```
 
-You may also execute a specific test-file in the test-suite using, e.g., 
+Brukseksempler
+Denne delen gir detaljerte eksempler på hvordan du kan interagere med systemet for å hente ut brannrisikovurderinger basert på geografiske koordinater.
 
-```
-pytest test_datamodel.py
-```
+Basis Bruk
+For å kalkulere brannrisiko for en spesifikk lokasjon, benytt følgende format for API-endepunktet:
 
-or running a specific test within a test-file using, e.g., 
 
-```
-pytest test_datamodel.py::TestDataModel::test_validate
-```
-
-# Application integration
-
-The file `src/main.py` provides sample code on how to compute fire risk indications and how to integration the implementation of fire risk indications into applications.
-
-Running the command
-
-```
-python3 main.py
-```
-
-should result in similar output as below 
-
-```
-...
-
-FireRiskPrediction[latitude=60.383 longitude=5.3327]
-FireRisks[2024-01-13 00:00:00+00:00 6.072481167177002]
-FireRisks[2024-01-13 01:00:00+00:00 6.084901639685655]
-FireRisks[2024-01-13 02:00:00+00:00 6.115931368998181]
-FireRisks[2024-01-13 03:00:00+00:00 6.146731614820376]
-FireRisks[2024-01-13 04:00:00+00:00 6.157474811242355]
-FireRisks[2024-01-13 05:00:00+00:00 6.148031627082924]
-FireRisks[2024-01-13 06:00:00+00:00 6.135871365180064]
-
-...
-
-FireRisks[2024-01-24 23:00:00+00:00 5.782145706635683]
-FireRisks[2024-01-25 00:00:00+00:00 5.789519566277565]
-FireRisks[2024-01-25 01:00:00+00:00 5.796865122491866]
-FireRisks[2024-01-25 02:00:00+00:00 5.80463250152655]
-FireRisks[2024-01-25 03:00:00+00:00 5.812626103446193]
-FireRisks[2024-01-25 04:00:00+00:00 5.820770098316547]
-FireRisks[2024-01-25 05:00:00+00:00 5.829024065716487]
-FireRisks[2024-01-25 06:00:00+00:00 5.837363568856687]
-```
-
-showing hourly computed fire risks for the given location.
-
+http://localhost:8000/compute-fire-risk?latitude=59.9139&longitude=10.7522
+Erstatt 59.9139 med ønsket breddegrad og 10.7522 med ønsket lengdegrad. Dette vil sende en forespørsel til systemet som beregner og returnerer gjennomsnittlig brannrisiko for den angitte posisjonen basert på de nyeste tilgjengelige værdataene.
