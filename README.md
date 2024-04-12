@@ -57,12 +57,22 @@ For å sikre funksjonaliteten til implementasjonen, utfør enhetstestene i katal
 pytest
 ```
 
-Brukseksempler
+¨# Brukseksempler
 Denne delen gir detaljerte eksempler på hvordan du kan interagere med systemet for å hente ut brannrisikovurderinger basert på geografiske koordinater.
 
 Basis Bruk
 For å kalkulere brannrisiko for en spesifikk lokasjon, benytt følgende format for API-endepunktet:
 
 
-http://localhost:8000/compute-fire-risk?latitude=59.9139&longitude=10.7522
-Erstatt 59.9139 med ønsket breddegrad og 10.7522 med ønsket lengdegrad. Dette vil sende en forespørsel til systemet som beregner og returnerer gjennomsnittlig brannrisiko for den angitte posisjonen basert på de nyeste tilgjengelige værdataene.
+http://localhost:8000/compute-fire-risk?latitude=Breddegrad&longitude=Lengdegrad
+Erstatt Breddegrad med ønsket breddegrad og Lengdegrad med ønsket lengdegrad. Dette vil sende en forespørsel til systemet som beregner og returnerer gjennomsnittlig brannrisiko for den angitte posisjonen basert på de nyeste tilgjengelige værdataene.
+
+Her er ett eksempel hvis du ønsker og sjekke brannrisikoen til Hauegesund:
+http://localhost:8000/compute-fire-risk?latitude=59.4138&longitude=5.2680
+
+Da vil svaret se noe sånt ut:
+
+```
+{"Gjennomsnitt verdien for brannrisikoen i dette området er":6.407811973491919}
+```
+
