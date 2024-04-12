@@ -57,7 +57,7 @@ For å sikre funksjonaliteten til implementasjonen, utfør enhetstestene i katal
 pytest
 ```
 
-¨# Brukseksempler
+# Brukseksempler
 Denne delen gir detaljerte eksempler på hvordan du kan interagere med systemet for å hente ut brannrisikovurderinger basert på geografiske koordinater.
 
 Basis Bruk
