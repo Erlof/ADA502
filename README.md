@@ -33,10 +33,10 @@ Hoved-APIet for dette systemet er implementert i filen `frcapi.py`
 
 Så api:
 - Denne delen hadde problemer med å kjøre fra main.py, så her ble det mye testing.
-- 'opend_data' blir brukt til å lese dataen rett
+- `opend_data` blir brukt til å lese dataen rett
 
 Siste katalog er database:
-- På grunn av dårlig tid ble mesteparten her gjort i 'test_mongodb'
+- På grunn av dårlig tid ble mesteparten her gjort i `test_mongodb`
 
 # Integrerte Værdatakilder
 Implementasjonen er designet for å være uavhengig av enhver spesifikk skybasert værdatatjeneste.
@@ -54,13 +54,13 @@ For å bruke disse forhåndsimplementerte klientene må en fil med navn `.env` p
 MET_CLIENT_ID = '<INSERT CLIENT ID HERE>'
 MET_CLIENT_SECRET = '<INSERT CLIENT SECRET HERE>'
 ```
-En '.env' fil må også bli laget i 'src/database'. Denne er for å koble seg opp til mongodb. Hvis en ser på connection_string ser den ca. slik ut: "mongodb+srv://{MONGO_CLIENT}@{CLUSTER_ID}.mongodb.net/
+En '.env' fil må også bli laget i `src/database`. Denne er for å koble seg opp til mongodb. Hvis en ser på connection_string ser den ca. slik ut: "mongodb+srv://{MONGO_CLIENT}@{CLUSTER_ID}.mongodb.net/
 
-'''
+```
 MONGO_CLIENT_ID = '<INSERT CLIENT ID HERE>'
 MONGO_CLIENT_SECRET = '<INSERT CLUSTER ID HERE>'
 
-'''
+```
 
 Legitimasjon for å bruke MET API-ene kan oppnås via: https://frost.met.no/auth/requestCredentials.html
 
