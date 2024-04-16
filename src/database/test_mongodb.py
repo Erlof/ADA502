@@ -4,6 +4,14 @@ import logging
 import json
 from test_ting import time_format_now
 # from database.conver_json import conver_to_json
+import matplotlib.pylab as plt
+import matplotlib 
+matplotlib.use('AGG')
+import io
+from frcm.datamodel.model import Location
+
+# see .env.example.py in the root dir.
+from decouple import config
 
 
 def json_serial(obj):
@@ -15,17 +23,9 @@ def json_serial(obj):
 
 def convert_time(wd_data, loc):
 
-    # wd_json_data = json.dumps(wd_data, indent=4, sort_keys=True, default=str)
-    # print(type(wd_json_data))
-    # print(wd_json_data)
-
-    # wd_time = wd_json_data['time']
-    # date_time = datetime.datetime.fromisoformat(wd_time)
-    # wd_json_data['time'] = date_time
 
     for k in wd_data.copy():
         wd_data[str(k)]=wd_data.pop(k)
-    #wd_json_data = json.dumps(wd_data, indent=4, sort_keys=True, default=str)
 
         
     wd_data_loc = {'loc' : loc} |  {'data': wd_data}
@@ -39,9 +39,13 @@ def convert_time(wd_data, loc):
 class mongo_connect:
 
     def __init__(self):
+
+        self.MONGO_CLIENT = config('MONGO_CLIENT_ID')
+        self.MONGO_server = config('MONGO_CLIENT_SECRET')
+
     
         # Connect to MongoDB
-        Connection_string = "mongodb+srv://torgunnar1997:YdOKibc2YpOrZI6C@cluster0.w82ra9n.mongodb.net/"
+        Connection_string = f"mongodb+srv://{self.MONGO_CLIENT}@{self.MONGO_server}.mongodb.net/"
         self.client = pymongo.MongoClient(Connection_string)
         db = self.client["database_fire_risks"]
         self.collection = db["fire_risks"]
@@ -50,27 +54,60 @@ class mongo_connect:
 
     def upload(self, data):
         # Example: Insert a document
-        
         self.collection.insert_one(data)
 
 
     def update(self, loc, data):
+        print('Updates the database for', loc)
 
-        self.collection.update_one(
-            {'loc' : loc},
-            {'$set' : {'data' : data}}
-        )
+        count = self.collection.count_documents({'loc' : loc})
 
-
-
-    def chech_for_data(self, data):
-        pathen = str(data)
-        print(pathen)
-        results = self.collection.find(
+        if count == 0:
+            self.upload(
+                data
+                )
+        
+        else:
+            self.collection.update_one(
+                {'loc' : loc},
+                {'$set' : {'data' : data}}
             )
+
+
+
+    def chech_for_data(self, loc, data):
+        data_path = str(data)
+        loc_path = str(loc)
+        results = self.collection.find({'loc':loc_path}, {f'data.{data_path}': 1})
         print(results, 'fant data')
         return results
     
+
+    def all_data_fra_loc(self, loc):
+        pathen = str(loc)
+        results = self.collection.find({'loc' : pathen}, {'data' : 1})
+        return results
+    
+    
+    def make_plot(self, loc):
+
+        results = self.all_data_fra_loc(loc)
+
+        for doc in results:
+            data = doc['data']
+        
+        lists = sorted(data.items()) # sorted by key, return a list of tuples
+
+        x, y = zip(*lists) # unpack a list of pairs into two tuples
+        plt.rcParams['figure.figsize'] = [7.50, 3.50]
+        plt.rcParams['figure.autolayout'] = True
+        fig = plt.figure()
+        plt.plot(x, y)
+        img_buf = io.BytesIO()
+        plt.savefig(img_buf, format='png')
+        plt.close(fig)
+        return img_buf
+        
 
     def disconnect(self):
         self.client.close()
@@ -80,7 +117,10 @@ class mongo_connect:
 
 if __name__ == "__main__":
 
-    loc_value = 60.383, 5.3327
+    latitude, longitude = 60.383, 5.3327
+    location = Location(latitude=latitude, longitude=longitude)
+
+    loc_value = location.latitude, location.longitude
     loc_str = str(loc_value)
 
     connect = mongo_connect()
@@ -90,9 +130,11 @@ if __name__ == "__main__":
     print('test')
     print(query)
 
-    results = connect.chech_for_data(query)
-    print(len(list(results)))
 
-    for doc in list(results):
-        print('Test')
+    bilde = connect.make_plot(loc_str)
+    
+
+
+    connect.disconnect()
+
 

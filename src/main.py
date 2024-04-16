@@ -14,77 +14,86 @@ from test_ting import time_format_now
 
 # sample code illustrating how to use the Fire Risk Computation API (FRCAPI)
 if __name__ == "__main__":
-
-    met_extractor = METExtractor()
-
-    # TODO: maybe embed extractor into client
-    met_client = METClient(extractor=met_extractor)
-
-    frc = FireRiskAPI(client=met_client)
-
-    location = Location(latitude=60.383, longitude=5.3327)  # Bergen
-    # location = Location(latitude=59.4225, longitude=5.2480)  # Haugesund
-
-    # Fails
-    # location = Location(latitude=62.5780, longitude=11.3919)  # Røros
-    # location = Location(latitude=69.6492, longitude=18.9553)  # Tromsø
-
-    loc_value = location.latitude, location.longitude
-    loc_str = str(loc_value)
-
-    connect = mongo_connect()
-
-    query = time_format_now()
-    
-    print('test')
-    print(query)
-
-    results = connect.chech_for_data(query)
-    for doc in results:
-            print(doc, 'Test')
-    
-
-    if len(list(results)) == 0:
-
-
-        # how far into the past to fetch observations
-
-        obs_delta = datetime.timedelta(days=1)
-
-        predictions = frc.compute_now(location, obs_delta)
         
-
-        # print(predictions)
-
-        firerisks = get_fire_risk(predictions)
-        #print(firerisks)
-        # api_fast.make_file(firerisks)
-        
-        pred_formatted = convert_time(firerisks, loc_str)
-
-        # print(pred_formatted)
-
-        connect.update(loc = loc_str, data = pred_formatted)
-        
-        results = connect.chech_for_data(query = query)
-        for doc in results:
-            print(doc)
-
-    else:
-        for doc in results:
-            print(doc)
-
-
-
-    connect.disconnect()
-
-
     app = FastAPI()
 
-    # Funker ikke fra api.da
-    @app.get("/")
-    def root():
-        return {"message": firerisks}
+    @app.get("/compute-fire-risk")
+    def compute_fire_risk(latitude: float, longitude: float):
+
+        print("Received latitude:", latitude)
+        print("Received longitude:", longitude)
+
+
+        met_extractor = METExtractor()
+
+        # TODO: maybe embed extractor into client
+        met_client = METClient(extractor=met_extractor)
+
+        frc = FireRiskAPI(client=met_client)
+
+
+        location = Location(latitude=latitude, longitude=longitude)
+        # location = Location(latitude=60.383, longitude=5.3327)  # Bergen
+
+        loc_str = met_client.get_nearest_station_id(location)
+
+        print('Connencts to mongo')
+        connect = mongo_connect()
+
+        query = time_format_now()
+        
+
+        results = connect.chech_for_data(loc_str, query)
+        ct = 0
+
+        for doc in results:
+
+            print(doc)
+            data = doc['data']
+            ct += 1
+
+
+
+        if ct == 0:
+            print('Updaterer data for å få ny data')
+
+            # how far into the past to fetch observations
+
+            obs_delta = datetime.timedelta(days=1)
+
+            predictions = frc.compute_now(location, obs_delta)
+            
+
+            # print(predictions)
+
+            firerisks = get_fire_risk(predictions)
+            #print(firerisks)
+            # api_fast.make_file(firerisks)
+            
+            pred_formatted = convert_time(firerisks, loc_str)
+
+            # print(pred_formatted)
+
+            connect.update(loc = loc_str, data = pred_formatted)
+            
+            results = connect.chech_for_data(loc_str, query)
+
+                
+            for doc in results:
+
+                print(doc)
+                data = doc['data']
+
+        img_buf = connect.make_plot(loc_str)
+
+        print('disconnects from mongo')
+
+        connect.disconnect()
+
+        img_buf.seek(0)
+
+        return {f'På dette området er firerisk {list(data.values())} ved tidspunktet {list(data.keys())}',
+                img_buf}
     
     uvicorn.run(app, host="0.0.0.0", port=8000)
 

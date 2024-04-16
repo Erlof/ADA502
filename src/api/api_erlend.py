@@ -6,7 +6,6 @@ app = FastAPI()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-message = 'Noe data'
 
 @app.get("/write_position/")
 async def write_position(latitude: float, longitude: float):
@@ -17,9 +16,13 @@ async def write_position(latitude: float, longitude: float):
         # Printing latitude and longitude
         print(f"Received latitude: {latitude}, longitude: {longitude}")
 
-        with open("position.txt", "w") as fil:
-            fil.write(f"Latitude: {latitude}, Longitude: {longitude}")
-        return {"message": message}
+        # Print both latitude and longitude in PyCharm
+        print("Received latitude:", latitude)
+        print("Received longitude:", longitude)
+
+        with open("position.txt", "w") as f:
+            f.write(f"Latitude: {latitude}, Longitude: {longitude}")
+        return {"message": "Position has been written to position.txt"}
     except Exception as e:
         logger.error(f"Error occurred: {e}")
         raise HTTPException(status_code=500, detail=str(e))
