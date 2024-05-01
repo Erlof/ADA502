@@ -70,7 +70,7 @@ class mongo_connect:
         else:
             self.collection.update_one(
                 {'loc' : loc},
-                {'$set' : {'data' : data}}
+                {'$set' : {'data' : data['data']}}
             )
 
 
@@ -78,8 +78,7 @@ class mongo_connect:
     def chech_for_data(self, loc, data):
         data_path = str(data)
         loc_path = str(loc)
-        results = self.collection.find({'loc':loc_path}, {f'data.{data_path}': 1})
-        print(results, 'fant data')
+        results = self.collection.find({'loc':loc_path, f'data.{data_path}': {"$exists" : 'true'}}, {f'data.{data_path}': 1})
         return results
     
 
@@ -89,24 +88,31 @@ class mongo_connect:
         return results
     
     
-    def make_plot(self, loc):
+    def make_plot(self, loc, img_buf):
 
         results = self.all_data_fra_loc(loc)
 
         for doc in results:
             data = doc['data']
+        # print('Data for plot\n', data)
         
         lists = sorted(data.items()) # sorted by key, return a list of tuples
 
         x, y = zip(*lists) # unpack a list of pairs into two tuples
-        plt.rcParams['figure.figsize'] = [7.50, 3.50]
+        plt.rcParams['figure.figsize'] = [10, 7]
         plt.rcParams['figure.autolayout'] = True
         fig = plt.figure()
         plt.plot(x, y)
-        img_buf = io.BytesIO()
-        plt.savefig(img_buf, format='png')
-        plt.close(fig)
-        return img_buf
+        plt.xticks([x[0], x[-1]], visible=True)
+        plt.xlabel('Tid')
+        plt.ylabel('Fire risk')
+        plt.title(str(loc))
+        plt.savefig(img_buf, format='JPEG')
+        img_buf.seek(0)
+        bufContents: bytes = img_buf.getvalue()
+
+
+        return bufContents
         
 
     def disconnect(self):

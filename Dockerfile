@@ -35,7 +35,7 @@ COPY poetry.lock .
 RUN poetry install
 
 # Copy the rest of the application code
-COPY src .
+COPY ./src ./src
 COPY tests .
 
 
@@ -52,4 +52,4 @@ EXPOSE 8000
 # first create the generic entry command (poetry in this case, which would allow us to run Python as well)
 ENTRYPOINT ["poetry", "run"]
 # CMD then runs poetry with the default flags
-CMD [".\src.main:app", "uvicorn", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["./src/main.py", "uvicorn", "--host", "0.0.0.0", "--port", "8000"]
