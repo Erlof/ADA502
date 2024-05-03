@@ -1,6 +1,6 @@
 
 # First a base image has to be selected. I am using the official Python 3.12 image based on leightweight Alpine
-FROM python:3.12-alpine
+FROM python:3.11-alpine
 
 # RUN allows to execute arbitrary shell commands, creating a new file system layer
 # Best Practice: create a dedicated user to run you application otherwise it is run a root
@@ -32,11 +32,11 @@ WORKDIR /app
 # Copy pyproject.toml and install dependencies
 COPY pyproject.toml .
 COPY poetry.lock .
-RUN poetry install
+
 
 # Copy the rest of the application code
-COPY ./src ./src
-COPY tests .
+COPY ./src . 
+# COPY tests tests
 
 
 RUN poetry install
@@ -52,4 +52,4 @@ EXPOSE 8000
 # first create the generic entry command (poetry in this case, which would allow us to run Python as well)
 ENTRYPOINT ["poetry", "run"]
 # CMD then runs poetry with the default flags
-CMD ["./src/main.py", "uvicorn", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
