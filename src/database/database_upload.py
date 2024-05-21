@@ -1,16 +1,13 @@
 import datetime
-from fastapi import FastAPI, Response
-import uvicorn
 import matplotlib
 matplotlib.use('AGG')
-import matplotlib.pyplot as plt
 import io 
 
 from frcm.frcapi import FireRiskAPI
 from frcm.weatherdata.client_met import METClient
 from frcm.weatherdata.extractor_met import METExtractor
 from frcm.datamodel.model import Location
-from api.uploads_data import api_fast
+
 from api.uploads_data import get_fire_risk
 from database.test_mongodb import mongo_connect
 from database.test_mongodb import convert_time
@@ -33,7 +30,7 @@ def get_data_now(loc_str, location, frc):
     for doc in results:
 
         print('Fant data')
-        print(doc)
+        # print(doc)
         data = doc['data']
         ct += 1
 
@@ -65,7 +62,7 @@ def get_data_now(loc_str, location, frc):
             
         for doc in results:
 
-            print(doc)
+            #print(doc)
             data = doc['data']
 
     return data
@@ -86,7 +83,7 @@ def get_data_graf(loc_str, location, frc):
     for doc in results:
 
         print('Fant data')
-        print(doc)
+        # print(doc)
         ct += 1
 
 
@@ -118,20 +115,8 @@ def get_data_graf(loc_str, location, frc):
 
         return bufContents
 
-    return data
 
 
-
-
-
-
-
-
-
-
-
-
-# sample code illustrating how to use the Fire Risk Computation API (FRCAPI)
 if __name__ == "__main__":
 
     met_extractor = METExtractor()

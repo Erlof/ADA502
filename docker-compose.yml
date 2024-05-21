@@ -1,0 +1,10 @@
+# En compose fil. Trengs kanskje ikke for det er et stort prosjekt fra main.py
+# Laget for å vise at det går
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+    - 8000:8000

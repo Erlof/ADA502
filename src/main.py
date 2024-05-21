@@ -4,18 +4,11 @@ from fastapi.responses import PlainTextResponse
 import uvicorn
 import matplotlib
 matplotlib.use('AGG')
-import matplotlib.pyplot as plt
-import io
 
 from frcm.frcapi import FireRiskAPI
 from frcm.weatherdata.client_met import METClient
 from frcm.weatherdata.extractor_met import METExtractor
 from frcm.datamodel.model import Location
-from api.uploads_data import api_fast
-from api.uploads_data import get_fire_risk
-from database.test_mongodb import mongo_connect
-from database.test_mongodb import convert_time
-from test_ting import time_format_now
 
 from database.database_upload import get_data_graf, get_data_now
 
@@ -24,7 +17,7 @@ app = FastAPI()
 
 @app.get("/", response_class=PlainTextResponse)
 def fikk_ingenting():
-    return 'For å få firerisk bruk:\nhttp://localhost:8000/compute-fire-risk?latitude=Breddegrad&longitude=Lengdegrad \nErstatt Breddegrad med ønsket breddegrad og Lengdegrad med ønsket lengdegrad. Dette vil sende en forespørsel til systemet som beregner og returnerer gjennomsnittlig brannrisiko for den angitte posisjonen basert på de nyeste tilgjengelige værdataene. Her er ett eksempel hvis du ønsker og sjekke brannrisikoen til Hauegesund: http://localhost:8000/compute-fire-risk?latitude=59.4138&longitude=5.2680 \nHvis en vil ha en graf så kan en bruke: \nhttp://localhost:8000/compute-fire-risk-graf?latitude=Breddegrad&longitude=Lengdegrad'
+    return 'For å få firerisk bruk:\nhttp://localhost:8000/compute-fire-risk?latitude=Breddegrad&longitude=Lengdegrad \nErstatt Breddegrad med ønsket breddegrad og Lengdegrad med ønsket lengdegrad. Dette vil sende en forespørsel til systemet som beregner og returnerer gjennomsnittlig brannrisiko for den angitte posisjonen basert på de nyeste tilgjengelige værdataene. Her er ett eksempel hvis du ønsker å sjekke brannrisikoen til Hauegesund: http://localhost:8000/compute-fire-risk?latitude=59.4138&longitude=5.2680 \nHvis en vil ha en graf så kan en bruke: \nhttp://localhost:8000/compute-fire-risk-graf?latitude=Breddegrad&longitude=Lengdegrad'
     
 
 

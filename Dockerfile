@@ -29,16 +29,16 @@ EOF
 WORKDIR /app
 
 
-# Copy pyproject.toml and install dependencies
+# Copy pyproject.toml and poetry.lock to /app
 COPY pyproject.toml .
 COPY poetry.lock .
 
 
 # Copy the rest of the application code
 COPY ./src . 
-# COPY tests tests
 
 
+# To install poetry and the dependencies
 RUN poetry install
 
 # ENV to run
@@ -52,4 +52,4 @@ EXPOSE 8000
 # first create the generic entry command (poetry in this case, which would allow us to run Python as well)
 ENTRYPOINT ["poetry", "run"]
 # CMD then runs poetry with the default flags
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,13 +1,11 @@
 import pymongo
 import datetime
 import logging
-import json
 from test_ting import time_format_now
 # from database.conver_json import conver_to_json
 import matplotlib.pylab as plt
 import matplotlib 
 matplotlib.use('AGG')
-import io
 from frcm.datamodel.model import Location
 
 # see .env.example.py in the root dir.
